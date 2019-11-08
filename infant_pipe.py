@@ -11,6 +11,7 @@ from os import listdir
 from os.path import isfile, join
 import re
 import nltk
+from nltk.stem.snowball import SnowballStemmer
 import numpy as np
 import spacy
 from spacy.attrs import LOWER, POS, ENT_TYPE, IS_ALPHA
@@ -71,6 +72,14 @@ def ngram_list(n, word_list, stop_word_list=None):
                 ngram_list.append(' '.join(ngram))
         return ngram_list
 
+def nltk_stems(token_list):
+    stems = []
+    stemmer = SnowballStemmer("english")
+    for token in token_list:
+        stems.append(stemmer.stem(token))
+
+    return stems
+
 file_name = argv[1]
 n = int(argv[2])
 
@@ -79,7 +88,8 @@ text = process(pdf_extract(file_name))
 doc = nlp(text)
 #print(remove_tokens_on_match(doc))
 token_list = []
-for token in doc:
+for token in remove_tokens_on_match(doc):
     token_list.append(token.text)
 
-print(ngram_list(n, token_list))
+#print(ngram_list(n, token_list))
+print(nltk_stems(token_list))
