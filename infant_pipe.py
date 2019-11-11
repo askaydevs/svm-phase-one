@@ -19,7 +19,8 @@ from spacy.tokens import Doc
 from sys import argv
 
 #path = 'Solverminds_Data/Sample'
-
+# PyPDF2 definition for extracting text from a circular (PDF Documents)
+#TODO: Function documentation
 def pdf_extract(file, dir_path = 'Solverminds_Data/Sample'):
     text = ""
     with open(join(dir_path, file), 'rb') as f:
@@ -28,14 +29,17 @@ def pdf_extract(file, dir_path = 'Solverminds_Data/Sample'):
             page = pdf.getPage(_)
             text += page.extractText()
     return text.strip()
-#print(processed)
+
+# Basic cleaning withregular expressions
 def process(text):
-    processed = text.replace('\n', ' ').replace('\r', '')
-    processed = re.sub("\s\s+", " ", processed)
+    #processed = text.replace('\n', ' ').replace('\r', '')
+    processed = re.sub('\d\.\s+|[a-z]\)\s+|•\s+|[A-Z]\.\s+|[IVX]+\.\s+', ' ', text)
+    processed = re.sub(r'\s+', ' ', processed)
     #processed = re.sub(' +', ' ', processed)
     processed = processed.strip()
     return processed
 
+# Function to remove unwanted tokens
 def remove_tokens_on_match(doc):
     indexes = []
     for index, token in enumerate(doc):
@@ -49,19 +53,23 @@ def remove_tokens_on_match(doc):
     doc2.from_array([LOWER, POS, ENT_TYPE, IS_ALPHA], np_array)
     return doc2
 
+# Function to generate n-grams
 def ngram_list(n, word_list, stop_word_list=None):
         """
-        Generate ngrams with width n excluding those that are entirely formed of stop words
+        Generate ngrams with width n excluding those that are entirely formed of
+         top words
 
         Args:
             n (int): i.e. 1, 2, 3...
             word_list (list of str): list of words
-            stop_word_list (list of str, Optional): list of words that should be excluded while obtaining
+            stop_word_list (list of str, Optional): list of words that should be
+                                                    excluded while obtaining
                                                     list of ngrams
 
         Returns:
-            list of str: List of ngrams formed from the given word list except for those that have all their tokes in
-                         stop words list
+            list of str:    List of ngrams formed from the given word list
+                            except for those that have all their tokes in
+                            stop words list
         """
         stop_word_set = set(stop_word_list) if stop_word_list else []
         all_ngrams = nltk.ngrams(word_list, n)
@@ -72,6 +80,7 @@ def ngram_list(n, word_list, stop_word_list=None):
                 ngram_list.append(' '.join(ngram))
         return ngram_list
 
+# Function to generate stems of words
 def nltk_stems(token_list):
     stems = []
     stemmer = SnowballStemmer("english")
@@ -80,16 +89,19 @@ def nltk_stems(token_list):
 
     return stems
 
-file_name = argv[1]
-n = int(argv[2])
+def main(file_name, n):
+    nlp = spacy.load('en_core_web_sm')
+    text = process(pdf_extract(file_name))
+    doc = nlp(text)
+    #print(remove_tokens_on_match(doc))
+    token_list = []
+    for token in remove_tokens_on_match(doc):
+        token_list.append(token.text)
 
-nlp = spacy.load('en_core_web_sm')
-text = process(pdf_extract(file_name))
-doc = nlp(text)
-#print(remove_tokens_on_match(doc))
-token_list = []
-for token in remove_tokens_on_match(doc):
-    token_list.append(token.text)
+    #print(ngram_list(n, token_list))
+    print(nltk_stems(token_list))
 
-#print(ngram_list(n, token_list))
-print(nltk_stems(token_list))
+if __name__ == "__main__":
+    file_name = argv[1]
+    n = int(argv[2])
+    main(file_name, n)
