@@ -1,0 +1,4 @@
+nltk===3.4
+spacy==2.2
+numpy==1.17
+PyPDF2==1.26
