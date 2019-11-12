@@ -47,5 +47,3 @@ def filteredSentence(sentence):
                 filtered_sent.append(i)
 
     return filtered_sent
-
-print(similarity_check('dog', 'bitch'))    
