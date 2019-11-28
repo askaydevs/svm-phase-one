@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Aug  9 11:26:28 2019
-
 @author: askaydevs (sk_singh18@outlook.com)
 """
+
 import PyPDF2
 import os
 from os import listdir
