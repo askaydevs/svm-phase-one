@@ -183,4 +183,3 @@ def run_summarization(text):
 if __name__ == '__main__':
     result = run_summarization(text_str)
     print(result)
-    
