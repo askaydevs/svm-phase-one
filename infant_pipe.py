@@ -60,7 +60,7 @@ def ngram_list(n, word_list, stop_word_list=None):
          top words
 
         Args:
-            n (int): i.e. 1, 2, 3...
+            n int): i.e. 1, 2, 3...
             word_list (list of str): list of words
             stop_word_list (list of str, Optional): list of words that should be
                                                     excluded while obtaining
@@ -105,3 +105,4 @@ if __name__ == "__main__":
     file_name = argv[1]
     n = int(argv[2])
     main(file_name, n)
+    
